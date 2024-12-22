@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ChargeProtectSetter</string>
+    <string name="app_summary">将全局电池电量保护值从80%调整至90%</string>
+</resources>
