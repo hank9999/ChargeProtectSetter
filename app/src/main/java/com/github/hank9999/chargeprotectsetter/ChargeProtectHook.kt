@@ -69,7 +69,7 @@ class ChargeProtectHook : BaseHC() {
         // 修改充电保护参数
         hook(mChargeProtectionUtils, object : IHook() {
             override fun before() {
-                if (!Thread.currentThread().isFromMethod(mAlwaysProtect!!.name)) {
+                if (!Thread.currentThread().isFromMethod(mAlwaysProtect!!)) {
                     return
                 }
                 for (i in 0..<argsLength()) {
@@ -200,7 +200,7 @@ class ChargeProtectHook : BaseHC() {
         mNotificationTextMethods.forEach { method ->
             hook(method, object : IHook() {
                 override fun before() {
-                    if (!Thread.currentThread().isFromMethod(mNotificationMethod!!.name)) {
+                    if (!Thread.currentThread().isFromMethod(mNotificationMethod!!)) {
                         return
                     }
 
@@ -218,7 +218,7 @@ class ChargeProtectHook : BaseHC() {
         logI(TAG, "ChargeProtectHook success")
     }
 
-    fun Thread.isFromMethod(methodName: String): Boolean {
-        return this.stackTrace.any { it.methodName == methodName }
+    fun Thread.isFromMethod(method: DexMethod): Boolean {
+        return this.stackTrace.any { it.methodName == method.name && it.className == method.className }
     }
 }
