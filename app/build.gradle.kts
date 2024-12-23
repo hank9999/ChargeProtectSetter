@@ -42,8 +42,8 @@ android {
         applicationId = "com.github.hank9999.chargeprotectsetter"
         minSdk = 29
         targetSdk = 34
-        versionCode = 24122301
-        versionName = "1.0"
+        versionCode = 24122302
+        versionName = "1.1"
         ndk {
             abiFilters.addAll(listOf("arm64-v8a", "armeabi-v7a"))
         }
