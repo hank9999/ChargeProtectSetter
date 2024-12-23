@@ -107,13 +107,14 @@ class ChargeProtectHook : BaseHC() {
                 val instance = thisObject()
                 instance.javaClass.declaredFields.forEach { field ->
                     if (field.type.name == "androidx.preference.CheckBoxPreference") {
+                        val originAccessible = field.isAccessible
                         field.isAccessible = true
                         val checkBoxPreference = field.get(instance)
                         if (callMethod(checkBoxPreference, "getKey").toString() == "cb_always_charge_protect") {
                             val newSummary = callMethod(checkBoxPreference, "getSummary").toString().replace("80%", "90%")
                             callMethod(checkBoxPreference, "setSummary", newSummary)
                         }
-                        field.isAccessible = false
+                        field.isAccessible = originAccessible
                     }
                 }
             }
