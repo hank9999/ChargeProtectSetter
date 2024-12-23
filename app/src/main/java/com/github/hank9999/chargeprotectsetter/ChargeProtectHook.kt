@@ -5,6 +5,7 @@ import com.hchen.hooktool.hook.IHook
 import com.hchen.hooktool.log.AndroidLog.logE
 import com.hchen.hooktool.log.AndroidLog.logI
 import org.luckypray.dexkit.DexKitBridge
+import org.luckypray.dexkit.wrap.DexMethod
 import java.lang.reflect.Method
 
 class ChargeProtectHook : BaseHC() {
@@ -13,10 +14,10 @@ class ChargeProtectHook : BaseHC() {
         lateinit var mDexKit: DexKitBridge
     }
 
-    private var mAlwaysProtect: Method? = null
+    private var mAlwaysProtect: DexMethod? = null
     private var mChargeProtectionUtils: Method? = null
     private var mChargeProtectFragment: Method? = null
-    private var mNotificationMethod: Method? = null
+    private var mNotificationMethod: DexMethod? = null
     private var mNotificationTextMethodBaseBaseClass: Class<*>? = null
     private var mNotificationTextMethodBaseClass: Class<*>? = null
     private var mNotificationTextMethods: List<Method> = ArrayList()
@@ -32,7 +33,7 @@ class ChargeProtectHook : BaseHC() {
                 matcher {
                     usingStrings("openProtect AlwaysProtectManager")
                 }
-            }.singleOrNull()?.getMethodInstance(classLoader)
+            }.singleOrNull()?.toDexMethod()
 
             logI(TAG, "mAlwaysProtect $mAlwaysProtect")
         } catch (e: Exception) {
@@ -131,7 +132,7 @@ class ChargeProtectHook : BaseHC() {
                     usingNumbers(0.8, 0, 67108864, 4)
                     usingStrings("com.miui.powercenter.low")
                 }
-            }.singleOrNull()?.getMethodInstance(classLoader)
+            }.singleOrNull()?.toDexMethod()
 
             logI(TAG, "mNotificationMethod $mNotificationMethod")
         } catch (e: Exception) {
