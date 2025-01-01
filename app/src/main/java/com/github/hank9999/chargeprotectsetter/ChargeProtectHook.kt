@@ -2,8 +2,8 @@ package com.github.hank9999.chargeprotectsetter
 
 import com.hchen.hooktool.BaseHC
 import com.hchen.hooktool.hook.IHook
-import com.hchen.hooktool.log.AndroidLog.logE
-import com.hchen.hooktool.log.AndroidLog.logI
+import com.hchen.hooktool.log.XposedLog.logE
+import com.hchen.hooktool.log.XposedLog.logI
 import org.luckypray.dexkit.DexKitBridge
 import org.luckypray.dexkit.wrap.DexMethod
 import java.lang.reflect.Method
