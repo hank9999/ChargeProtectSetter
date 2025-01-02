@@ -18,7 +18,7 @@
 充电电量最高到 75%, `电池保护` 页面 UI 显示 75%, 通知提示显示 75%  
 
 ## 配置方法
-无配置文件默认为 80%  
+无配置文件默认为 75%  
 如需调整充电限制, 需要修改 `/Android/data/com.miui.securitycenter/files/ChargeProtectSetter/charge_level` 文件, 不存在需要创建一个  
 直接填写电量数字, 没有百分号，没有换行  
 比如 调整至 75%, 则文件内容为 `75`  

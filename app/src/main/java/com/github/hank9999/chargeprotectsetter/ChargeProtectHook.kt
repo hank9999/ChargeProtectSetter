@@ -24,7 +24,7 @@ class ChargeProtectHook : BaseHC() {
     private var mNotificationTextMethodBaseBaseClass: Class<*>? = null
     private var mNotificationTextMethodBaseClass: Class<*>? = null
     private var mNotificationTextMethods: List<Method> = ArrayList()
-    private var chargeLevel = 80
+    private var chargeLevel = 75
     private val chargeLevelSettingFilePath = "${Environment.getExternalStorageDirectory().path}/Android/data/com.miui.securitycenter/files/ChargeProtectSetter/charge_level"
 
     override fun init() {
