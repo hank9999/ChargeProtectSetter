@@ -1,11 +1,14 @@
 package com.github.hank9999.chargeprotectsetter
 
+import android.os.Environment
+import androidx.core.text.isDigitsOnly
 import com.hchen.hooktool.BaseHC
 import com.hchen.hooktool.hook.IHook
 import com.hchen.hooktool.log.XposedLog.logE
 import com.hchen.hooktool.log.XposedLog.logI
 import org.luckypray.dexkit.DexKitBridge
 import org.luckypray.dexkit.wrap.DexMethod
+import java.io.File
 import java.lang.reflect.Method
 
 class ChargeProtectHook : BaseHC() {
@@ -21,8 +24,36 @@ class ChargeProtectHook : BaseHC() {
     private var mNotificationTextMethodBaseBaseClass: Class<*>? = null
     private var mNotificationTextMethodBaseClass: Class<*>? = null
     private var mNotificationTextMethods: List<Method> = ArrayList()
+    private var chargeLevel = 80
+    private val chargeLevelSettingFilePath = "${Environment.getExternalStorageDirectory().path}/Android/data/com.miui.securitycenter/files/ChargeProtectSetter/charge_level"
 
     override fun init() {
+        // 获取充电配置
+        run readConfig@{
+            try {
+                val settingFile = File(chargeLevelSettingFilePath)
+                if (!settingFile.exists()) {
+                    logI(TAG, "chargeLevelSettingFile is not exist, chargeLevel: $chargeLevel")
+                    return@readConfig
+                }
+                val settingRaw = settingFile.readText().trim()
+                logI(TAG, "chargeLevelSettingFile read success, chargeLevelRaw: $settingRaw")
+                if (!settingRaw.isDigitsOnly()) {
+                    logE(TAG, "chargeLevelSettingFile read error, chargeLevel: $chargeLevel")
+                    return@readConfig
+                }
+                val chargeLevelInt = settingRaw.toInt()
+                if (chargeLevelInt < 15 || chargeLevelInt > 95) {
+                    logE(TAG, "chargeLevel set $chargeLevelInt failed, beyond range 15%-95%, chargeLevel: $chargeLevel")
+                    return@readConfig
+                }
+                chargeLevel = chargeLevelInt
+                logI(TAG, "chargeLevel set success: $chargeLevel")
+            } catch (e: Exception) {
+                logE(TAG, "chargeLevelSettingFile read error, chargeLevel: $chargeLevel, $e")
+            }
+        }
+
         // 获取调用充电保护设置方法
         try {
             mAlwaysProtect = mDexKit.findClass {
@@ -76,7 +107,7 @@ class ChargeProtectHook : BaseHC() {
                         return
                     }
                     if (getArgs(0).equals(80)) {
-                        setArgs(0, 90)
+                        setArgs(0, chargeLevel)
                     }
                 }
             })
@@ -111,7 +142,7 @@ class ChargeProtectHook : BaseHC() {
                         field.isAccessible = true
                         val checkBoxPreference = field.get(instance)
                         if (callMethod(checkBoxPreference, "getKey").toString() == "cb_always_charge_protect") {
-                            val newSummary = callMethod(checkBoxPreference, "getSummary").toString().replace("80%", "90%")
+                            val newSummary = callMethod(checkBoxPreference, "getSummary").toString().replace("80%", "$chargeLevel%")
                             callMethod(checkBoxPreference, "setSummary", newSummary)
                         }
                         field.isAccessible = originAccessible
@@ -211,7 +242,7 @@ class ChargeProtectHook : BaseHC() {
                     if (summary == null) {
                         return
                     }
-                    val newSummary = summary.toString().replace("80%", "90%") as CharSequence
+                    val newSummary = summary.toString().replace("80%", "$chargeLevel%") as CharSequence
                     setArgs(0, newSummary)
                 }
             })
