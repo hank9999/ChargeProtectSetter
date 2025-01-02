@@ -95,7 +95,7 @@ class ChargeProtectHook : BaseHC() {
 
         // 修改充电保护参数
         if (mChargeProtectionUtils == null) {
-            logE(TAG, "mChargeProtectionUtils1 is null, method not found, will not hook UI")
+            logE(TAG, "mChargeProtectionUtils is null, method not found, will not hook UI")
             return
         } else {
             hook(mChargeProtectionUtils, object : IHook() {
