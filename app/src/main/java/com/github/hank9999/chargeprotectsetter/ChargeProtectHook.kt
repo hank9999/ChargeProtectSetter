@@ -62,25 +62,25 @@ class ChargeProtectHook : BaseHC() {
             logE(TAG, "mChargeProtectionUtils $e")
         }
 
-        if (mChargeProtectionUtils == null) {
-            logE(TAG, "mChargeProtectionUtils is null, method not found")
-            return
-        }
-
         // 修改充电保护参数
-        hook(mChargeProtectionUtils, object : IHook() {
-            override fun before() {
-                if (!Thread.currentThread().isFromMethod(mAlwaysProtect!!)) {
-                    return
-                }
-                for (i in 0..<argsLength()) {
-                    if (getArgs(i).equals(80)) {
-                        setArgs(i, 90)
-                        break
+        if (mChargeProtectionUtils == null) {
+            logE(TAG, "mChargeProtectionUtils1 is null, method not found, will not hook UI")
+            return
+        } else {
+            hook(mChargeProtectionUtils, object : IHook() {
+                override fun before() {
+                    if (!Thread.currentThread().isFromMethod(mAlwaysProtect!!)) {
+                        return
+                    }
+                    if (argsLength() != 1) {
+                        return
+                    }
+                    if (getArgs(0).equals(80)) {
+                        setArgs(0, 90)
                     }
                 }
-            }
-        })
+            })
+        }
 
         // 获取充电保护 UI Fragment
         try {
